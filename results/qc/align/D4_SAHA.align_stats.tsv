@@ -1,0 +1,13 @@
+metric	value
+Total_fragments	19876923
+Mapped_fragments	18270890
+Uniquely_mapped_fragments	18270890
+Multi_mapping_fragments	0
+Unmapped_fragments	1606033
+Properly_paired_fragments	15343624
+Singleton_fragments	432824
+More_than_one_chr_fragments	179309
+Unexpected_strandness_fragments	48234
+Unexpected_template_length	2203881
+Inversed_mapping	63018
+Indels	86289

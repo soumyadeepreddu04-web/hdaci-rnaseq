@@ -1,0 +1,5 @@
+# Python tools (versions used for the committed results)
+snakemake==9.27.1
+multiqc==1.35
+# only needed to rebuild the PDF report
+typst==0.15.2

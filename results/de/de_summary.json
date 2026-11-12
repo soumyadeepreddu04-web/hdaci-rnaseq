@@ -1,0 +1,112 @@
+{
+  "genes_in_annotation": 78941,
+  "genes_tested": 18976,
+  "alpha": 0.05,
+  "lfc_strong": 1,
+  "size_factors": {
+    "D1_DMSO": 0.969,
+    "D1_SAHA": 1.065,
+    "D1_RMD": 1.022,
+    "D2_DMSO": 0.994,
+    "D2_SAHA": 1.066,
+    "D2_RMD": 1.049,
+    "D4_DMSO": 0.996,
+    "D4_SAHA": 1.078,
+    "D4_RMD": 1.051,
+    "D7_DMSO": 1.006,
+    "D7_SAHA": 0.797,
+    "D7_RMD": 1.067
+  },
+  "contrasts": {
+    "SAHA_vs_DMSO": {
+      "up": 5018,
+      "down": 4903,
+      "up_strong": 1986,
+      "down_strong": 1594,
+      "top_up": ["H1-0", "KIF5C", "UNC13B", "MPZL1", "ABCG1", "CORO6", "CORO1C", "CTNNAL1", "CCDC88A", "TMCC2"],
+      "top_down": ["ZMYND11", "IL27RA", "CTSS", "JADE2", "CACNA1I", "CARMIL2", "UBA7", "SORL1", "PPP3CB-AS1", "SELL"],
+      "highlight": [
+        {
+          "gene_name": "H1-0",
+          "log2FoldChange": 4.451,
+          "padj": 9.88e-191
+        },
+        {
+          "gene_name": "CDKN1A",
+          "log2FoldChange": 1.603,
+          "padj": 1.43e-21
+        },
+        {
+          "gene_name": "PARP1",
+          "log2FoldChange": 0.473,
+          "padj": 1.06e-08
+        },
+        {
+          "gene_name": "SMARCB1",
+          "log2FoldChange": -1.017,
+          "padj": 1.61e-06
+        }
+      ]
+    },
+    "RMD_vs_DMSO": {
+      "up": 6315,
+      "down": 5923,
+      "up_strong": 3204,
+      "down_strong": 2820,
+      "top_up": ["H1-0", "UNC13B", "JPT1", "IRGM", "SYT11", "LGMN", "TM7SF2", "CORO1C", "IZUMO4", "GALE"],
+      "top_down": ["SORL1", "ZMYND11", "SELL", "KCNA3", "ZFX", "CAMK4", "APOL6", "SELPLG", "ST6GAL1", "SYNE1"],
+      "highlight": [
+        {
+          "gene_name": "H1-0",
+          "log2FoldChange": 6.146,
+          "padj": 0
+        },
+        {
+          "gene_name": "CDKN1A",
+          "log2FoldChange": 1.734,
+          "padj": 7e-26
+        },
+        {
+          "gene_name": "PARP1",
+          "log2FoldChange": 0.59,
+          "padj": 2.44e-13
+        },
+        {
+          "gene_name": "SMARCB1",
+          "log2FoldChange": -1.137,
+          "padj": 3.96e-08
+        }
+      ]
+    },
+    "RMD_vs_SAHA": {
+      "up": 3666,
+      "down": 3632,
+      "up_strong": 699,
+      "down_strong": 368,
+      "top_up": ["CHAC1", "JPT1", "RECQL4", "CDC6", "IRGM", "NEU1", "ENSG00000260719", "NUDT19-DT", "NOSIP", "IZUMO4"],
+      "top_down": ["CAMK4", "BCL11B", "LEF1", "IFI16", "CRYBG1", "INPPL1", "MAP4K4", "NCKAP1L", "EPHB6", "ITPKB"],
+      "highlight": [
+        {
+          "gene_name": "H1-0",
+          "log2FoldChange": 1.695,
+          "padj": 6.35e-42
+        },
+        {
+          "gene_name": "PARP1",
+          "log2FoldChange": 0.117,
+          "padj": 0.242
+        },
+        {
+          "gene_name": "CDKN1A",
+          "log2FoldChange": 0.131,
+          "padj": 0.511
+        },
+        {
+          "gene_name": "SMARCB1",
+          "log2FoldChange": -0.12,
+          "padj": 0.692
+        }
+      ]
+    }
+  }
+}

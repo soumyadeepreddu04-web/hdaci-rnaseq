@@ -1,0 +1,3 @@
+# MultiQC settings: keep local paths and timestamps out of the report
+show_analysis_paths: false
+show_analysis_time: false

@@ -1,0 +1,46 @@
+# Workflow configuration. Paths are relative to the repository root.
+
+samples: config/samples.tsv
+
+# Read pairs taken from the start of each ENA FASTQ file. 0 = download and use every read.
+# The libraries hold 77-89 million pairs each; see "Design decisions" in the README.
+max_read_pairs: 20000000
+
+reference:
+  gencode_release: 50
+  genome_url: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_50/GRCh38.primary_assembly.genome.fa.gz
+  gtf_url: https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_50/gencode.v50.primary_assembly.annotation.gtf.gz
+  # ERCC spike-in sequences, annotation and mix concentrations (Thermo Fisher, cat. 4456740)
+  ercc_url: https://assets.thermofisher.com/TFS-Assets/LSG/manuals/ERCC92.zip
+  ercc_concentrations_url: https://assets.thermofisher.com/TFS-Assets/LSG/manuals/cms_095046.txt
+
+# MSigDB Hallmark gene sets (gene symbols)
+hallmark_url: https://data.broadinstitute.org/gsea-msigdb/msigdb/release/2025.1.Hs/h.all.v2025.1.Hs.symbols.gmt
+
+# Count tables deposited by the original authors (TopHat + HTSeq, full depth), used as an external check
+published_counts_url: https://ftp.ncbi.nlm.nih.gov/geo/series/GSE114nnn/GSE114883/suppl/GSE114883_Host_gene_raw_count_table.csv.gz
+
+index:
+  # A gapped Subread index needs about 6 GB of memory for the human genome, a full index about 18 GB.
+  gapped: true
+
+counting:
+  # 0 = unstranded, 1 = forward, 2 = reverse. The libraries are reverse-stranded (dUTP);
+  # the strandedness rule checks this against the data.
+  strand_specific: 2
+  strandedness_sample: D1_DMSO
+
+de:
+  reference_level: DMSO
+  alpha: 0.05          # false discovery rate
+  lfc_strong: 1        # |log2 fold change| used for the "strong" subset
+  min_count: 10        # a gene is kept if it has at least min_count reads ...
+  min_samples: 4       # ... in at least min_samples libraries (one treatment group)
+  # Genes reported by name in the summary: two known HDAC-inhibitor response genes (H1-0, CDKN1A)
+  # and the two the original paper followed up (SMARCB1, PARP1)
+  highlight_genes: [H1-0, CDKN1A, SMARCB1, PARP1]
+
+threads:
+  trim: 2
+  align: 10
+  count: 2

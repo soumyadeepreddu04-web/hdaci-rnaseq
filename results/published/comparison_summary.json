@@ -1,0 +1,48 @@
+{
+  "genes_shared_between_annotations": 48132,
+  "genes_expressed": 20086,
+  "per_sample_log_cpm_pearson": {
+    "min": 0.93,
+    "median": 0.9329
+  },
+  "per_sample_log_cpm_spearman": {
+    "min": 0.8948,
+    "median": 0.8982
+  },
+  "published_counts_genes_tested": 19642,
+  "contrasts": {
+    "SAHA_vs_DMSO": {
+      "genes_compared": 15535,
+      "lfc_pearson_r": 0.9724,
+      "significant_this_workflow": 8784,
+      "significant_published_counts": 9665,
+      "published_counts_up": 5620,
+      "published_counts_down": 5673,
+      "confirmed": 8390,
+      "confirmed_fraction": 0.9551,
+      "opposite_direction": 5
+    },
+    "RMD_vs_DMSO": {
+      "genes_compared": 15535,
+      "lfc_pearson_r": 0.9817,
+      "significant_this_workflow": 10723,
+      "significant_published_counts": 11321,
+      "published_counts_up": 6846,
+      "published_counts_down": 6592,
+      "confirmed": 10307,
+      "confirmed_fraction": 0.9612,
+      "opposite_direction": 11
+    }
+  },
+  "reported_by_authors": {
+    "genes_after_filtering": 16058,
+    "SAHA_vs_DMSO": {
+      "up": 3971,
+      "down": 2940
+    },
+    "RMD_vs_DMSO": {
+      "up": 5068,
+      "down": 4050
+    }
+  }
+}

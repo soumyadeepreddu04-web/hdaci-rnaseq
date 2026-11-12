@@ -1,0 +1,407 @@
+# RNA-seq workflow: raw reads -> QC -> alignment -> gene counts -> differential expression -> pathways
+#
+#   snakemake --cores 12                      # everything
+#   snakemake --cores 12 -n                   # dry run
+#   snakemake --cores 12 results/counts/gene_counts.tsv   # stop after counting
+#
+# Dataset: GEO GSE114883 / ENA PRJNA472973 (Beliakova-Bethell et al., J Biol Chem 2019).
+
+import csv
+
+
+configfile: "config/config.yaml"
+
+
+with open(config["samples"]) as handle:
+    SAMPLES = {row["sample"]: row for row in csv.DictReader(handle, delimiter="\t")}
+
+REF = "resources/ref"
+INDEX = "resources/index/GRCh38_ERCC"
+INDEX_FILES = expand(INDEX + ".{ext}", ext=["00.b.array", "00.b.tab", "files", "reads"])
+CONTRASTS = ["SAHA_vs_DMSO", "RMD_vs_DMSO", "RMD_vs_SAHA"]
+MAX_PAIRS = int(config["max_read_pairs"])
+
+
+def expected_pairs(wildcards):
+    total = int(SAMPLES[wildcards.sample]["read_pairs"])
+    return total if MAX_PAIRS == 0 else min(MAX_PAIRS, total)
+
+
+rule all:
+    input:
+        "results/qc/multiqc_report.html",
+        "results/qc/strandedness.tsv",
+        "results/figures/pca.png",
+        "results/gsea/hallmark_gsea.csv",
+        "results/ercc/ercc_summary.json",
+        "results/published/comparison_summary.json",
+        "results/summary.json",
+        "report/hdaci_rnaseq_report.pdf",
+
+
+# ---------------------------------------------------------------- reference
+
+
+rule download_genome:
+    output:
+        REF + "/GRCh38.primary_assembly.genome.fa.gz",
+    params:
+        url=config["reference"]["genome_url"],
+    shell:
+        "curl -sSL --retry 5 --retry-delay 10 -o {output} {params.url}"
+
+
+rule download_annotation:
+    output:
+        REF + "/gencode.primary_assembly.annotation.gtf.gz",
+    params:
+        url=config["reference"]["gtf_url"],
+    shell:
+        "curl -sSL --retry 5 --retry-delay 10 -o {output} {params.url}"
+
+
+rule download_ercc:
+    output:
+        zip=REF + "/ERCC92.zip",
+        conc=REF + "/ercc_concentrations.txt",
+    params:
+        zip_url=config["reference"]["ercc_url"],
+        conc_url=config["reference"]["ercc_concentrations_url"],
+    shell:
+        """
+        curl -sSL --retry 5 -o {output.zip} {params.zip_url}
+        curl -sSL --retry 5 -o {output.conc} {params.conc_url}
+        """
+
+
+rule download_gene_sets:
+    output:
+        "resources/gene_sets/hallmark.symbols.gmt",
+    params:
+        url=config["hallmark_url"],
+    shell:
+        "curl -sSL --retry 5 -o {output} {params.url}"
+
+
+rule download_published_counts:
+    output:
+        "resources/published/GSE114883_host_gene_raw_counts.csv.gz",
+    params:
+        url=config["published_counts_url"],
+    shell:
+        "curl -sSL --retry 5 -o {output} {params.url}"
+
+
+rule combine_reference:
+    """Human genome plus the 92 ERCC spike-in sequences, with a matching annotation."""
+    input:
+        genome=REF + "/GRCh38.primary_assembly.genome.fa.gz",
+        gtf=REF + "/gencode.primary_assembly.annotation.gtf.gz",
+        ercc=REF + "/ERCC92.zip",
+    output:
+        fasta=REF + "/GRCh38_ERCC.fa",
+        gtf=REF + "/gencode_ERCC.gtf",
+    shell:
+        """
+        gzip -dc {input.genome} > {output.fasta}
+        unzip -p {input.ercc} ERCC92.fa >> {output.fasta}
+        gzip -dc {input.gtf} > {output.gtf}
+        unzip -p {input.ercc} ERCC92.gtf >> {output.gtf}
+        """
+
+
+rule gene_annotation:
+    """One row per gene: id, symbol, biotype and chromosome, taken from the GTF."""
+    input:
+        gtf=REF + "/gencode_ERCC.gtf",
+    output:
+        "resources/ref/gene_annotation.tsv",
+    script:
+        "scripts/gene_annotation.R"
+
+
+rule subread_index:
+    input:
+        fasta=REF + "/GRCh38_ERCC.fa",
+    output:
+        INDEX_FILES,
+    params:
+        basename=INDEX,
+        gapped=config["index"]["gapped"],
+    log:
+        "logs/subread_index.log",
+    script:
+        "scripts/build_index.R"
+
+
+# ---------------------------------------------------------------- reads
+
+
+rule fetch_fastq:
+    """Stream the first max_read_pairs pairs of a library from ENA (or the whole files if 0)."""
+    output:
+        r1=temp("data/fastq/{sample}_1.fastq.gz"),
+        r2=temp("data/fastq/{sample}_2.fastq.gz"),
+    params:
+        url1=lambda wc: SAMPLES[wc.sample]["fastq_1"],
+        url2=lambda wc: SAMPLES[wc.sample]["fastq_2"],
+        md5_1=lambda wc: SAMPLES[wc.sample]["md5_1"],
+        md5_2=lambda wc: SAMPLES[wc.sample]["md5_2"],
+        whole_file=MAX_PAIRS == 0,
+        pairs=expected_pairs,
+    resources:
+        ena_download=1,
+    retries: 3
+    log:
+        "logs/fetch_fastq/{sample}.log",
+    shell:
+        "bash workflow/scripts/fetch_fastq.sh {params.url1} {params.url2} {output.r1} {output.r2} "
+        "{params.pairs} {params.whole_file} {params.md5_1} {params.md5_2} > {log} 2>&1"
+
+
+rule trim:
+    """Adapter and quality trimming with fastp (through the Rfastp package)."""
+    input:
+        r1="data/fastq/{sample}_1.fastq.gz",
+        r2="data/fastq/{sample}_2.fastq.gz",
+    output:
+        r1=temp("data/trimmed/{sample}_R1.fastq.gz"),
+        r2=temp("data/trimmed/{sample}_R2.fastq.gz"),
+        json="results/qc/fastp/{sample}.fastp.json",
+        html="results/qc/fastp/{sample}.fastp.html",
+    threads: config["threads"]["trim"]
+    log:
+        "logs/trim/{sample}.log",
+    script:
+        "scripts/trim.R"
+
+
+rule align:
+    """Align read pairs to GRCh38 + ERCC with the Subread aligner."""
+    input:
+        r1="data/trimmed/{sample}_R1.fastq.gz",
+        r2="data/trimmed/{sample}_R2.fastq.gz",
+        index=INDEX_FILES,
+    output:
+        bam="data/bam/{sample}.bam",
+        stats="results/qc/align/{sample}.align_stats.tsv",
+    params:
+        index=INDEX,
+    threads: config["threads"]["align"]
+    log:
+        "logs/align/{sample}.log",
+    script:
+        "scripts/align.R"
+
+
+rule count:
+    """Count read pairs per gene with featureCounts."""
+    input:
+        bam="data/bam/{sample}.bam",
+        gtf=REF + "/gencode_ERCC.gtf",
+    output:
+        counts="results/counts/per_sample/{sample}.counts.tsv",
+        summary="results/qc/featurecounts/{sample}.featureCounts.summary",
+    params:
+        strand=config["counting"]["strand_specific"],
+    threads: config["threads"]["count"]
+    log:
+        "logs/count/{sample}.log",
+    script:
+        "scripts/count.R"
+
+
+rule strandedness:
+    """Count one library as unstranded, forward and reverse to confirm the protocol."""
+    input:
+        bam=expand("data/bam/{sample}.bam", sample=config["counting"]["strandedness_sample"]),
+        gtf=REF + "/gencode_ERCC.gtf",
+    output:
+        "results/qc/strandedness.tsv",
+    threads: config["threads"]["count"]
+    log:
+        "logs/strandedness.log",
+    script:
+        "scripts/strandedness.R"
+
+
+rule merge_counts:
+    input:
+        counts=expand("results/counts/per_sample/{sample}.counts.tsv", sample=SAMPLES),
+        stats=expand("results/qc/align/{sample}.align_stats.tsv", sample=SAMPLES),
+        summaries=expand("results/qc/featurecounts/{sample}.featureCounts.summary", sample=SAMPLES),
+        fastp=expand("results/qc/fastp/{sample}.fastp.json", sample=SAMPLES),
+    output:
+        counts="results/counts/gene_counts.tsv",
+        qc="results/qc/sample_qc.tsv",
+        mqc="results/qc/alignment_mqc.tsv",
+    params:
+        samples=list(SAMPLES),
+    script:
+        "scripts/merge_counts.R"
+
+
+rule multiqc:
+    input:
+        "results/qc/alignment_mqc.tsv",
+        expand("results/qc/fastp/{sample}.fastp.json", sample=SAMPLES),
+        expand("results/qc/featurecounts/{sample}.featureCounts.summary", sample=SAMPLES),
+    output:
+        "results/qc/multiqc_report.html",
+    log:
+        "logs/multiqc.log",
+    shell:
+        "multiqc --force --no-data-dir --no-version-check --config config/multiqc_config.yaml "
+        "--filename multiqc_report.html --outdir results/qc "
+        "--title 'HDAC inhibitors in primary CD4+ T cells (GSE114883)' results/qc > {log} 2>&1"
+
+
+# ---------------------------------------------------------------- analysis
+
+
+rule deseq2:
+    """Paired design (~ donor + treatment), three contrasts, shrunken fold changes."""
+    input:
+        counts="results/counts/gene_counts.tsv",
+        samples=config["samples"],
+        genes="resources/ref/gene_annotation.tsv",
+    output:
+        tables=expand("results/de/{contrast}.csv.gz", contrast=CONTRASTS),
+        vst="results/de/vst.tsv.gz",
+        normalised="results/de/normalised_counts.tsv.gz",
+        dds="results/de/dds.rds",
+        summary="results/de/de_summary.json",
+    params:
+        de=config["de"],
+    log:
+        "logs/deseq2.log",
+    script:
+        "scripts/deseq2.R"
+
+
+rule figures:
+    input:
+        tables=expand("results/de/{contrast}.csv.gz", contrast=CONTRASTS),
+        vst="results/de/vst.tsv.gz",
+        samples=config["samples"],
+    output:
+        pca="results/figures/pca.png",
+        distance="results/figures/sample_distance.png",
+        volcano="results/figures/volcano.png",
+        concordance="results/figures/drug_concordance.png",
+        heatmap="results/figures/top_genes_heatmap.png",
+        concordance_stats="results/de/drug_concordance.json",
+    params:
+        de=config["de"],
+    log:
+        "logs/figures.log",
+    script:
+        "scripts/figures.R"
+
+
+rule leave_one_donor_out:
+    """Refit the model without each donor in turn to see whether any one donor drives the result."""
+    input:
+        dds="results/de/dds.rds",
+    output:
+        "results/de/leave_one_donor_out.csv",
+    params:
+        de=config["de"],
+    log:
+        "logs/leave_one_donor_out.log",
+    script:
+        "scripts/leave_one_donor_out.R"
+
+
+rule gsea:
+    input:
+        tables=expand("results/de/{contrast}.csv.gz", contrast=CONTRASTS),
+        gmt="resources/gene_sets/hallmark.symbols.gmt",
+    output:
+        table="results/gsea/hallmark_gsea.csv",
+        figure="results/figures/hallmark_gsea.png",
+    log:
+        "logs/gsea.log",
+    script:
+        "scripts/gsea.R"
+
+
+rule ercc:
+    """Spike-in checks: fold-change accuracy and sensitivity to the normalisation assumption."""
+    input:
+        counts="results/counts/gene_counts.tsv",
+        samples=config["samples"],
+        conc=REF + "/ercc_concentrations.txt",
+        dds="results/de/dds.rds",
+    output:
+        table="results/ercc/ercc_observed_vs_expected.csv",
+        shifts="results/ercc/global_shift.csv",
+        figure="results/figures/ercc.png",
+        summary="results/ercc/ercc_summary.json",
+    params:
+        de=config["de"],
+    log:
+        "logs/ercc.log",
+    script:
+        "scripts/ercc.R"
+
+
+rule compare_published:
+    """Same model on the authors' deposited counts (TopHat + HTSeq, full depth)."""
+    input:
+        published="resources/published/GSE114883_host_gene_raw_counts.csv.gz",
+        counts="results/counts/gene_counts.tsv",
+        samples=config["samples"],
+        tables=expand("results/de/{contrast}.csv.gz", contrast=CONTRASTS),
+    output:
+        table="results/published/fold_change_comparison.csv.gz",
+        figure="results/figures/published_comparison.png",
+        summary="results/published/comparison_summary.json",
+    params:
+        de=config["de"],
+    log:
+        "logs/compare_published.log",
+    script:
+        "scripts/compare_published.R"
+
+
+rule summary:
+    """Collect the headline numbers and software versions used in the README and the report."""
+    input:
+        qc="results/qc/sample_qc.tsv",
+        strandedness="results/qc/strandedness.tsv",
+        de="results/de/de_summary.json",
+        donors="results/de/leave_one_donor_out.csv",
+        concordance="results/de/drug_concordance.json",
+        gsea="results/gsea/hallmark_gsea.csv",
+        ercc="results/ercc/ercc_summary.json",
+        published="results/published/comparison_summary.json",
+    output:
+        summary="results/summary.json",
+        session="results/session_info.txt",
+    params:
+        max_read_pairs=MAX_PAIRS,
+        gencode=config["reference"]["gencode_release"],
+    script:
+        "scripts/summary.R"
+
+
+rule report:
+    """PDF write-up. The Typst source reads its numbers from the workflow outputs."""
+    input:
+        "results/summary.json",
+        "results/qc/sample_qc.tsv",
+        "results/de/leave_one_donor_out.csv",
+        "results/ercc/global_shift.csv",
+        "results/figures/pca.png",
+        "results/figures/volcano.png",
+        "results/figures/drug_concordance.png",
+        "results/figures/top_genes_heatmap.png",
+        "results/figures/hallmark_gsea.png",
+        "results/figures/ercc.png",
+        "results/figures/published_comparison.png",
+        source="report/report.typ",
+    output:
+        "report/hdaci_rnaseq_report.pdf",
+    shell:
+        "python report/build_report.py"

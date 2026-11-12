@@ -1,0 +1,17 @@
+# id: 'subread_align'
+# section_name: 'Subread alignment'
+# description: 'Read pairs aligned to GRCh38 + ERCC with the Subread aligner (Rsubread::align).'
+# plot_type: 'table'
+Sample	Read pairs aligned	% uniquely mapped	% properly paired
+D1_DMSO	19830701	91.67	75.99
+D1_SAHA	19824341	92.2	76
+D1_RMD	19888680	91.45	75.7
+D2_DMSO	19831910	91.84	76.12
+D2_SAHA	19895481	92.18	76.85
+D2_RMD	19885162	91.44	76.12
+D4_DMSO	19851461	91.66	75.98
+D4_SAHA	19876923	91.92	77.19
+D4_RMD	19730605	92.08	76.94
+D7_DMSO	19813260	92.69	77.85
+D7_SAHA	19684075	85.08	74.32
+D7_RMD	19874151	91.74	76.81

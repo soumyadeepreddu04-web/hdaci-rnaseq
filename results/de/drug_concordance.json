@@ -1,0 +1,13 @@
+{
+  "genes": 18976,
+  "pearson_r": 0.8703,
+  "spearman_rho": 0.8433,
+  "major_axis_slope": 1.3853,
+  "significant_saha": 9921,
+  "significant_rmd": 12238,
+  "significant_both": 8531,
+  "significant_both_same_direction": 8338,
+  "saha_genes_also_significant_with_rmd": 0.8599,
+  "median_abs_lfc_saha_in_shared": 0.9378,
+  "median_abs_lfc_rmd_in_shared": 1.2639
+}

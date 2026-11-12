@@ -1,0 +1,18 @@
+# environments
+.venv/
+.Rlib/
+
+# Snakemake state and logs
+.snakemake/
+logs/
+
+# large inputs and intermediates (re-created by the workflow)
+data/
+resources/
+results/counts/per_sample/
+results/de/dds.rds
+results/qc/fastp/*.html
+
+.DS_Store
+.Rhistory
+__pycache__/

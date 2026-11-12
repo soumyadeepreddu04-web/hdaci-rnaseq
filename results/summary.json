@@ -1,0 +1,488 @@
+{
+  "dataset": {
+    "geo": "GSE114883",
+    "bioproject": "PRJNA472973",
+    "libraries": 12
+  },
+  "max_read_pairs": 20000000,
+  "gencode_release": 50,
+  "qc": {
+    "read_pairs": {
+      "min": 20000000,
+      "median": 20000000,
+      "max": 20000000
+    },
+    "q30_rate": {
+      "min": 0.9042,
+      "median": 0.918,
+      "max": 0.93
+    },
+    "pairs_after_trimming_fraction": {
+      "min": 0.9842,
+      "median": 0.9921,
+      "max": 0.9948
+    },
+    "uniquely_mapped_fraction": {
+      "min": 0.8508,
+      "median": 0.9179,
+      "max": 0.9269
+    },
+    "assigned_fraction": {
+      "min": 0.416,
+      "median": 0.5964,
+      "max": 0.6202
+    },
+    "assigned_pairs": {
+      "min": 8188033,
+      "median": 11843742,
+      "max": 12294933
+    },
+    "ercc_fraction_of_assigned": {
+      "min": 0.0168,
+      "median": 0.0212,
+      "max": 0.0347
+    },
+    "genes_detected": {
+      "min": 16985,
+      "median": 17507.5,
+      "max": 18340
+    },
+    "flagged_libraries": [
+      "D7_SAHA"
+    ]
+  },
+  "strandedness": [
+    {
+      "setting": "unstranded",
+      "strandSpecific": 0,
+      "assigned": 11452306,
+      "no_feature": 4890973,
+      "ambiguous": 1836332,
+      "assigned_fraction": 0.5775
+    },
+    {
+      "setting": "forward",
+      "strandSpecific": 1,
+      "assigned": 1462289,
+      "no_feature": 16689212,
+      "ambiguous": 28110,
+      "assigned_fraction": 0.0737
+    },
+    {
+      "setting": "reverse",
+      "strandSpecific": 2,
+      "assigned": 11937143,
+      "no_feature": 5171846,
+      "ambiguous": 1070622,
+      "assigned_fraction": 0.602
+    }
+  ],
+  "differential_expression": {
+    "genes_in_annotation": 78941,
+    "genes_tested": 18976,
+    "alpha": 0.05,
+    "lfc_strong": 1,
+    "size_factors": {
+      "D1_DMSO": 0.969,
+      "D1_SAHA": 1.065,
+      "D1_RMD": 1.022,
+      "D2_DMSO": 0.994,
+      "D2_SAHA": 1.066,
+      "D2_RMD": 1.049,
+      "D4_DMSO": 0.996,
+      "D4_SAHA": 1.078,
+      "D4_RMD": 1.051,
+      "D7_DMSO": 1.006,
+      "D7_SAHA": 0.797,
+      "D7_RMD": 1.067
+    },
+    "contrasts": {
+      "SAHA_vs_DMSO": {
+        "up": 5018,
+        "down": 4903,
+        "up_strong": 1986,
+        "down_strong": 1594,
+        "top_up": ["H1-0", "KIF5C", "UNC13B", "MPZL1", "ABCG1", "CORO6", "CORO1C", "CTNNAL1", "CCDC88A", "TMCC2"],
+        "top_down": ["ZMYND11", "IL27RA", "CTSS", "JADE2", "CACNA1I", "CARMIL2", "UBA7", "SORL1", "PPP3CB-AS1", "SELL"],
+        "highlight": [
+          {
+            "gene_name": "H1-0",
+            "log2FoldChange": 4.451,
+            "padj": 9.88e-191
+          },
+          {
+            "gene_name": "CDKN1A",
+            "log2FoldChange": 1.603,
+            "padj": 1.43e-21
+          },
+          {
+            "gene_name": "PARP1",
+            "log2FoldChange": 0.473,
+            "padj": 1.06e-08
+          },
+          {
+            "gene_name": "SMARCB1",
+            "log2FoldChange": -1.017,
+            "padj": 1.61e-06
+          }
+        ]
+      },
+      "RMD_vs_DMSO": {
+        "up": 6315,
+        "down": 5923,
+        "up_strong": 3204,
+        "down_strong": 2820,
+        "top_up": ["H1-0", "UNC13B", "JPT1", "IRGM", "SYT11", "LGMN", "TM7SF2", "CORO1C", "IZUMO4", "GALE"],
+        "top_down": ["SORL1", "ZMYND11", "SELL", "KCNA3", "ZFX", "CAMK4", "APOL6", "SELPLG", "ST6GAL1", "SYNE1"],
+        "highlight": [
+          {
+            "gene_name": "H1-0",
+            "log2FoldChange": 6.146,
+            "padj": 0
+          },
+          {
+            "gene_name": "CDKN1A",
+            "log2FoldChange": 1.734,
+            "padj": 7e-26
+          },
+          {
+            "gene_name": "PARP1",
+            "log2FoldChange": 0.59,
+            "padj": 2.44e-13
+          },
+          {
+            "gene_name": "SMARCB1",
+            "log2FoldChange": -1.137,
+            "padj": 3.96e-08
+          }
+        ]
+      },
+      "RMD_vs_SAHA": {
+        "up": 3666,
+        "down": 3632,
+        "up_strong": 699,
+        "down_strong": 368,
+        "top_up": ["CHAC1", "JPT1", "RECQL4", "CDC6", "IRGM", "NEU1", "ENSG00000260719", "NUDT19-DT", "NOSIP", "IZUMO4"],
+        "top_down": ["CAMK4", "BCL11B", "LEF1", "IFI16", "CRYBG1", "INPPL1", "MAP4K4", "NCKAP1L", "EPHB6", "ITPKB"],
+        "highlight": [
+          {
+            "gene_name": "H1-0",
+            "log2FoldChange": 1.695,
+            "padj": 6.35e-42
+          },
+          {
+            "gene_name": "PARP1",
+            "log2FoldChange": 0.117,
+            "padj": 0.242
+          },
+          {
+            "gene_name": "CDKN1A",
+            "log2FoldChange": 0.131,
+            "padj": 0.511
+          },
+          {
+            "gene_name": "SMARCB1",
+            "log2FoldChange": -0.12,
+            "padj": 0.692
+          }
+        ]
+      }
+    }
+  },
+  "leave_one_donor_out": [
+    {
+      "contrast": "SAHA_vs_DMSO",
+      "donor_left_out": "D1",
+      "lfc_pearson_r": 0.9891,
+      "significant_full": 9921,
+      "significant_without_donor": 8045,
+      "still_significant_fraction": 0.7984,
+      "direction_changes": 0
+    },
+    {
+      "contrast": "RMD_vs_DMSO",
+      "donor_left_out": "D1",
+      "lfc_pearson_r": 0.9943,
+      "significant_full": 12238,
+      "significant_without_donor": 10476,
+      "still_significant_fraction": 0.8519,
+      "direction_changes": 0
+    },
+    {
+      "contrast": "SAHA_vs_DMSO",
+      "donor_left_out": "D2",
+      "lfc_pearson_r": 0.99,
+      "significant_full": 9921,
+      "significant_without_donor": 7915,
+      "still_significant_fraction": 0.791,
+      "direction_changes": 0
+    },
+    {
+      "contrast": "RMD_vs_DMSO",
+      "donor_left_out": "D2",
+      "lfc_pearson_r": 0.9945,
+      "significant_full": 12238,
+      "significant_without_donor": 10388,
+      "still_significant_fraction": 0.8456,
+      "direction_changes": 0
+    },
+    {
+      "contrast": "SAHA_vs_DMSO",
+      "donor_left_out": "D4",
+      "lfc_pearson_r": 0.9882,
+      "significant_full": 9921,
+      "significant_without_donor": 7660,
+      "still_significant_fraction": 0.766,
+      "direction_changes": 0
+    },
+    {
+      "contrast": "RMD_vs_DMSO",
+      "donor_left_out": "D4",
+      "lfc_pearson_r": 0.9941,
+      "significant_full": 12238,
+      "significant_without_donor": 10336,
+      "still_significant_fraction": 0.8396,
+      "direction_changes": 0
+    },
+    {
+      "contrast": "SAHA_vs_DMSO",
+      "donor_left_out": "D7",
+      "lfc_pearson_r": 0.9799,
+      "significant_full": 9921,
+      "significant_without_donor": 9783,
+      "still_significant_fraction": 0.8898,
+      "direction_changes": 0
+    },
+    {
+      "contrast": "RMD_vs_DMSO",
+      "donor_left_out": "D7",
+      "lfc_pearson_r": 0.9942,
+      "significant_full": 12238,
+      "significant_without_donor": 12249,
+      "still_significant_fraction": 0.9439,
+      "direction_changes": 0
+    }
+  ],
+  "drug_concordance": {
+    "genes": 18976,
+    "pearson_r": 0.8703,
+    "spearman_rho": 0.8433,
+    "major_axis_slope": 1.3853,
+    "significant_saha": 9921,
+    "significant_rmd": 12238,
+    "significant_both": 8531,
+    "significant_both_same_direction": 8338,
+    "saha_genes_also_significant_with_rmd": 0.8599,
+    "median_abs_lfc_saha_in_shared": 0.9378,
+    "median_abs_lfc_rmd_in_shared": 1.2639
+  },
+  "gsea": {
+    "sets_tested": 48,
+    "significant_saha": 26,
+    "significant_rmd": 25,
+    "significant_both": 19,
+    "significant_both_same_direction": 18,
+    "opposite_direction": [
+      "UNFOLDED_PROTEIN_RESPONSE"
+    ],
+    "SAHA_vs_DMSO": {
+      "up": ["CHOLESTEROL_HOMEOSTASIS", "GLYCOLYSIS", "MYOGENESIS", "UV_RESPONSE_UP", "HYPOXIA"],
+      "down": ["ALLOGRAFT_REJECTION", "INTERFERON_ALPHA_RESPONSE", "INTERFERON_GAMMA_RESPONSE", "COMPLEMENT", "MYC_TARGETS_V2"]
+    },
+    "RMD_vs_DMSO": {
+      "up": ["CHOLESTEROL_HOMEOSTASIS", "UV_RESPONSE_UP", "E2F_TARGETS", "ESTROGEN_RESPONSE_LATE", "GLYCOLYSIS"],
+      "down": ["INTERFERON_ALPHA_RESPONSE", "ALLOGRAFT_REJECTION", "INTERFERON_GAMMA_RESPONSE", "UV_RESPONSE_DN", "KRAS_SIGNALING_UP"]
+    },
+    "RMD_vs_SAHA": {
+      "up": ["E2F_TARGETS", "UNFOLDED_PROTEIN_RESPONSE", "G2M_CHECKPOINT", "MYC_TARGETS_V2", "UV_RESPONSE_UP"],
+      "down": ["INTERFERON_ALPHA_RESPONSE", "INTERFERON_GAMMA_RESPONSE", "UV_RESPONSE_DN", "ALLOGRAFT_REJECTION", "INFLAMMATORY_RESPONSE"]
+    }
+  },
+  "ercc": {
+    "spike_ins_detected": 57,
+    "subgroup_b_used": 12,
+    "accuracy_slope": 0.9828,
+    "accuracy_r": 0.98,
+    "by_subgroup": [
+      {
+        "contrast": "RMD_vs_DMSO",
+        "subgroup": "A",
+        "spike_ins": 15,
+        "expected": -2,
+        "observed_median": -2.0132
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "subgroup": "B",
+        "spike_ins": 12,
+        "expected": 0,
+        "observed_median": -0.0077
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "subgroup": "C",
+        "spike_ins": 15,
+        "expected": 0.58,
+        "observed_median": 0.5947
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "subgroup": "D",
+        "spike_ins": 15,
+        "expected": 1,
+        "observed_median": 1.019
+      },
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "subgroup": "A",
+        "spike_ins": 15,
+        "expected": -2,
+        "observed_median": -1.9875
+      },
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "subgroup": "B",
+        "spike_ins": 12,
+        "expected": 0,
+        "observed_median": -0.0198
+      },
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "subgroup": "C",
+        "spike_ins": 15,
+        "expected": 0.58,
+        "observed_median": 0.5856
+      },
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "subgroup": "D",
+        "spike_ins": 15,
+        "expected": 1,
+        "observed_median": 0.9595
+      }
+    ],
+    "global_shift": [
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "median_shift_log2": -0.2047,
+        "min_shift_log2": -0.2763,
+        "max_shift_log2": 0.9215,
+        "donors_negative": 3,
+        "significant_default": 9921,
+        "significant_spike_in_normalised": 5654
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "median_shift_log2": -0.209,
+        "min_shift_log2": -0.4621,
+        "max_shift_log2": -0.0733,
+        "donors_negative": 4,
+        "significant_default": 12238,
+        "significant_spike_in_normalised": 9046
+      }
+    ],
+    "global_shift_by_donor": [
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "donor": "D1",
+        "shift_log2": -0.2064
+      },
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "donor": "D2",
+        "shift_log2": -0.2029
+      },
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "donor": "D4",
+        "shift_log2": -0.2763
+      },
+      {
+        "contrast": "SAHA_vs_DMSO",
+        "donor": "D7",
+        "shift_log2": 0.9215
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "donor": "D1",
+        "shift_log2": -0.4621
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "donor": "D2",
+        "shift_log2": -0.1983
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "donor": "D4",
+        "shift_log2": -0.0733
+      },
+      {
+        "contrast": "RMD_vs_DMSO",
+        "donor": "D7",
+        "shift_log2": -0.2196
+      }
+    ]
+  },
+  "published_comparison": {
+    "genes_shared_between_annotations": 48132,
+    "genes_expressed": 20086,
+    "per_sample_log_cpm_pearson": {
+      "min": 0.93,
+      "median": 0.9329
+    },
+    "per_sample_log_cpm_spearman": {
+      "min": 0.8948,
+      "median": 0.8982
+    },
+    "published_counts_genes_tested": 19642,
+    "contrasts": {
+      "SAHA_vs_DMSO": {
+        "genes_compared": 15535,
+        "lfc_pearson_r": 0.9724,
+        "significant_this_workflow": 8784,
+        "significant_published_counts": 9665,
+        "published_counts_up": 5620,
+        "published_counts_down": 5673,
+        "confirmed": 8390,
+        "confirmed_fraction": 0.9551,
+        "opposite_direction": 5
+      },
+      "RMD_vs_DMSO": {
+        "genes_compared": 15535,
+        "lfc_pearson_r": 0.9817,
+        "significant_this_workflow": 10723,
+        "significant_published_counts": 11321,
+        "published_counts_up": 6846,
+        "published_counts_down": 6592,
+        "confirmed": 10307,
+        "confirmed_fraction": 0.9612,
+        "opposite_direction": 11
+      }
+    },
+    "reported_by_authors": {
+      "genes_after_filtering": 16058,
+      "SAHA_vs_DMSO": {
+        "up": 3971,
+        "down": 2940
+      },
+      "RMD_vs_DMSO": {
+        "up": 5068,
+        "down": 4050
+      }
+    }
+  },
+  "software": {
+    "R": "R version 4.6.2 (2026-10-29)",
+    "Bioconductor": "3.23",
+    "Rsubread": "2.26.0",
+    "Rfastp": "1.22.0",
+    "DESeq2": "1.52.0",
+    "ashr": "2.2.63",
+    "fgsea": "1.38.0",
+    "ggplot2": "4.0.3",
+    "data.table": "1.18.6.1",
+    "snakemake": "9.27.1",
+    "multiqc": "multiqc, version 1.35"
+  }
+}
