@@ -1,0 +1,4 @@
+# GitHub's language bar should describe the code. Workflow outputs (including the MultiQC
+# HTML report) are generated, and the report folder is the write-up, so neither is counted.
+results/** linguist-generated
+report/** linguist-documentation
